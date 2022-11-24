@@ -1,14 +1,20 @@
+import React from 'react';
 import './App.css';
+import OffcanvasExample from './Components/NavBarHeader';
 
+import LoginForm from './Components/Login';
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <p>
-          Student Portal
-        </p>
-      </header>
+    <div>
+      <OffcanvasExample />
+      <br />
+      <div className='Container'>
+        <div class="row">    
+          <LoginForm />       
+        </div>
     </div>
+    </div>
+     
   );
 }
 
