@@ -1,5 +1,8 @@
 import React from 'react';
+
 import '../App.css';
+
+import logo from '../Assets/logo.svg';
 
 import {
   MDBContainer,
@@ -14,17 +17,21 @@ from 'mdb-react-ui-kit';
 
 function LoginForm() {
   return (
-    <MDBContainer fluid style={{maxWidth:"90%"}}>
-
+    <MDBContainer  style={{maxWidth:"80%"}}>
+      
       <MDBRow>
         
         <MDBCol >
-          <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"  alt="Phone" />
+          <img src={logo} style={{ width:650, height:650   }} alt="Phone" />
         </MDBCol>
         
         <MDBCol> 
+          <MDBRow style={{justifyContent: 'center',marginBottom: '.6rem', fontSize:30, fontFamily:'serif' }}>
+            Login
+          </MDBRow>
+          
 
-          <MDBInput wrapperClass='mb-4' label='Email address' id='formControlLg' type='email' size="lg"/>
+          <MDBInput wrapperClass='mb-4'  label='Email address' id='formControlLg' type='email' size="lg"/>
           <MDBInput wrapperClass='mb-4' label='Password' id='formControlLg' type='password' size="lg"/>
 
 
