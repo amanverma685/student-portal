@@ -13,7 +13,7 @@ function NavbarHeader() {
   return (
     <>
       {['md'].map((expand) => (
-        <Navbar key={expand} bg="light" expand={expand} className="mb-2">
+        <Navbar key={expand} bg="light" expand={expand} className="mb-1">
           <Container fluid >
           <MDBNavbarBrand href='#'>
             <img

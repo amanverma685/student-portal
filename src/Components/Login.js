@@ -1,6 +1,7 @@
 
 import '../App.css';
-import  { useState, useEffect,React } from 'react';
+import  { useState,React } from 'react';
+import axios from "axios";
 
 import logo from '../Assets/logo.svg';
 
@@ -17,9 +18,12 @@ from 'mdb-react-ui-kit';
 
 function LoginForm() {
 
-  
+  const baseURL = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/admin/login";
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [loginInfo, setLoginInfo] = useState([]);
 
   const handleChange_email = event => {
     setEmail(event.target.value);    
@@ -30,10 +34,19 @@ function LoginForm() {
     setPassword(event.target.value);    
   };
 
-  const submitCredentials = event => {
-    
-    
 
+  const submitCredentials = async(event) =>  {
+    
+    await axios.post(baseURL,
+      {
+        "email":email,
+        "password":password
+      }).then((response) => {
+      // setLoginInfo(response.data);
+      console.log(response.data)
+      setLoginInfo(response.data);
+      });
+    
   }
 
   return (
@@ -42,11 +55,11 @@ function LoginForm() {
       <MDBRow>
         
         <MDBCol >
-          <img src={logo} style={{ width:650, height:650   }} alt="Phone" />
+          <img src={logo} style={{ width:650, height:650}} alt="Phone" />
         </MDBCol>
         
-        <MDBCol> 
-          <MDBRow style={{justifyContent: 'center',marginBottom: '.6rem', fontSize:30, fontFamily:'serif' }}>
+        <MDBCol className="fixed-center"> 
+          <MDBRow style={{justifyContent: 'center',marginBottom: '.6rem',display:'flex', fontSize:30, fontFamily:'serif' }}>
             Login
           </MDBRow>
           
