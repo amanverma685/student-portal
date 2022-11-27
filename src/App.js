@@ -1,17 +1,25 @@
 import React from 'react';
 import './App.css';
 import NavbarHeader from './Components/NavBarHeader';
+import HomeScreen from './Components/Home';
 
 import LoginForm from './Components/Login';
 function App() {
+
+  var status = window.sessionStorage.getItem('status');
+  console.log("app js",status);
+  
   return (
-    <div style={{ marginTop: '.6rem' }}>
+    <div>
       <NavbarHeader />
       <br />
       <div className='Container' >
-        <div class="row">    
-          <LoginForm />       
-        </div>
+        {
+          (status===null) && <LoginForm/>
+        }
+        {
+          (status!==null) && <HomeScreen /> 
+        }
     </div>
     </div>
      

@@ -1,9 +1,9 @@
 
 import '../App.css';
-import  { useState,React } from 'react';
+import { useState, React } from 'react';
 import axios from "axios";
-
 import logo from '../Assets/logo.svg';
+
 
 import {
   MDBContainer,
@@ -14,7 +14,7 @@ import {
   MDBInput,
   MDBCheckbox
 }
-from 'mdb-react-ui-kit';
+  from 'mdb-react-ui-kit';
 
 function LoginForm() {
 
@@ -22,50 +22,57 @@ function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [loginInfo, setLoginInfo] = useState([]);
+  var okstatus = 0;
 
   const handleChange_email = event => {
-    setEmail(event.target.value);    
-    
+    setEmail(event.target.value);
+
   };
 
   const handleChange_password = event => {
-    setPassword(event.target.value);    
+    setPassword(event.target.value);
   };
 
 
-  const submitCredentials = async(event) =>  {
-    
+  const submitCredentials = async (event) => {
+
     await axios.post(baseURL,
       {
-        "email":email,
-        "password":password
+        "email": email,
+        "password": password
       }).then((response) => {
-      // setLoginInfo(response.data);
-      console.log(response.data)
-      setLoginInfo(response.data);
+
+        okstatus = response.status;
+        console.log(response.status);
+        if (okstatus === 200) {
+          window.sessionStorage.setItem('status', okstatus);
+          window.location.reload(true);
+        }
+
+        else
+          return alert("INVALID CREDENTIALS... PLEASE TRY AGAIN...")
+
       });
-    
+
   }
 
   return (
-    <MDBContainer  style={{maxWidth:"80%"}}>
-      
+    <MDBContainer style={{ maxWidth: "80%" }}>
+
       <MDBRow>
-        
+
         <MDBCol >
-          <img src={logo} style={{ width:650, height:650}} alt="Phone" />
+          <img src={logo} style={{ width: 650, height: 650 }} alt="Phone" />
         </MDBCol>
-        
-        <MDBCol className="fixed-center"> 
-          <MDBRow style={{justifyContent: 'center',marginBottom: '.6rem',display:'flex', fontSize:30, fontFamily:'serif' }}>
+
+        <MDBCol className="fixed-center">
+          <MDBRow style={{ justifyContent: 'center', marginBottom: '.6rem', display: 'flex', fontSize: 30, fontFamily: 'serif' }}>
             Login
           </MDBRow>
-          
 
-          <MDBInput wrapperClass='mb-4'  onChange={handleChange_email} value={email} label='Email address' id='formControlLg' type='email' size="lg"/>
-          <MDBInput wrapperClass='mb-4' onChange={handleChange_password} value={password} label='Password' id='formControlLg' type='password' size="lg"/>
+
+          <MDBInput wrapperClass='mb-4' onChange={handleChange_email} value={email} label='Email address' id='forControlLg' type='email' size="lg" />
+          <MDBInput wrapperClass='mb-4' onChange={handleChange_password} value={password} label='Password' id='formControlLg' type='password' size="lg" />
 
 
           <div className="d-flex justify-content-between mx-4 mb-4">
@@ -79,22 +86,22 @@ function LoginForm() {
             <p className="text-center fw-bold mx-3 mb-0">OR Login </p>
           </div>
 
-          <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#3b5998'}}>
-            <MDBIcon fab icon="facebook-f" className="mx-2"/>
+          <MDBBtn className="mb-4 w-100" size="lg" style={{ backgroundColor: '#3b5998' }}>
+            <MDBIcon fab icon="facebook-f" className="mx-2" />
             Continue with facebook
           </MDBBtn>
 
-          <MDBBtn className="mb-4 w-100" size="lg" style={{backgroundColor: '#55acee'}}>
-            <MDBIcon fab icon="twitter" className="mx-2"/>
+          <MDBBtn className="mb-4 w-100" size="lg" style={{ backgroundColor: '#55acee' }}>
+            <MDBIcon fab icon="twitter" className="mx-2" />
             Continue with twitter
           </MDBBtn>
-         
+
 
         </MDBCol>
-        
+
       </MDBRow>
 
-    
+
     </MDBContainer>
 
   );

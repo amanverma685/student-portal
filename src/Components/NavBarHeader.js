@@ -1,15 +1,23 @@
-import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import Offcanvas from 'react-bootstrap/Offcanvas';
+
 import {
   MDBNavbarBrand,
   MDBTypography
 } from 'mdb-react-ui-kit';
 function NavbarHeader() {
+
+  const handleLogout = () => {
+    window.sessionStorage.clear();
+    window.location.reload(true);
+    
+  }
+
+
   return (
     <>
       {['md'].map((expand) => (
@@ -65,7 +73,7 @@ function NavbarHeader() {
                     className="me-2"
                     aria-label="Search"
                   />
-                  <Button variant="outline-success">Search</Button>
+                  <button variant="outline-success" onClick={handleLogout}>LogOut</button>
                 </Form>
               </Offcanvas.Body>
             </Navbar.Offcanvas>
