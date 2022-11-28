@@ -21,9 +21,7 @@ import Modal from 'react-bootstrap/Modal';
 import {MDBInput} from 'mdb-react-ui-kit';
 import Multiselect from 'multiselect-react-dropdown';
 import ListItem from '@mui/material/ListItem';
-import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
-import ImageIcon from '@mui/icons-material/Image';
 import Divider from '@mui/material/Divider';
 
 const ExpandMore = styled((props) => {
@@ -219,7 +217,7 @@ const onRemove =(selectedList, removedItem) =>{
             spec.map((s, index)=>{
             var text = `Credits required - ${s.credits_required}`;
             var code = `Course Code - ${s.code}`;
-            var image_ = `./Assets/${s.code}.jpg`;
+            // var image_ = `./Assets/${s.code}.jpg`;
             var image_ = 'https://anubhava.iiitb.ac.in/content/images/size/w1000/2021/04/iiitb_high_5.jpg';
 
             return(
