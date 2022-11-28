@@ -209,7 +209,7 @@ const onRemove =(selectedList, removedItem) =>{
             <h2 style={{marginLeft:'2rem'}}>Specialisations </h2>
           </div>
           <div >
-          <Button variant="info" onClick={handleShow} style={{margin:"1rem"}}>
+          <Button variant="info"  onClick={handleShow} style={{margin:"1rem"}}>
               + Add Specialisation
             </Button>
           </div>
@@ -224,7 +224,7 @@ const onRemove =(selectedList, removedItem) =>{
 
             return(
               <><div className='col'>
-                <Card  style={{ width: "35rem", margin:"3rem" }}  key={index} >
+                <Card  style={{ width: "30rem", margin:"3rem" }}  key={index} >
 
                 <CardHeader
                   title= {code}
@@ -247,7 +247,7 @@ const onRemove =(selectedList, removedItem) =>{
                 </CardContent>
 
                 <CardActions>
-                  <IconButton onClick={e=> deleteSpecialisation(e,s.specialisation_id)} aria-label="delete">
+                  <IconButton onClick={e=> deleteSpecialisation(e,s.specialisation_id)} color='error' aria-label="delete">
                   Delete <DeleteIcon />
                   </IconButton>
                   <ExpandMore 
@@ -255,7 +255,7 @@ const onRemove =(selectedList, removedItem) =>{
                     onClick={ d => handleExpandClick(d,index)}
                     aria-label="show more"
                   > 
-                  <ExpandMoreIcon />
+                  <ExpandMoreIcon color='primary' />
                     View Courses
                   </ExpandMore>
 
@@ -264,25 +264,31 @@ const onRemove =(selectedList, removedItem) =>{
                 <div>
                   <Collapse in={expandedArray[index]} timeout="auto" unmountOnExit>
                     <div className='row'>
+                    <Typography variant='h5' style={{marginLeft:'.2rem'}} >
+                        courses
+                      </Typography>
                       {
                         s.courses.map((c,course_index)=>{
 
                 return( 
                     <CardContent >
+                      
                       <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
                       <ListItem>
                           <ListItemAvatar>
-                            <Avatar>
-                              <ImageIcon />
-                            </Avatar>
+                          <Avatar
+                                alt=""
+                                src="https://www.iiitb.ac.in/includefiles/settings/iiitb-silver-jubilee-logo1.jpg"
+                                sx={{ width: 50, height: 50 }}
+                              />
                           </ListItemAvatar>
                           <div className='row'>
                             <div className='col'>
-                              <div className='row-md-2'>
+                              <div className='row-md-2' style={{marginLeft:'1rem'}}>
                                 <Typography variant='h5'>{s.courses[course_index].name}</Typography>
                               </div>
-                              <div className='row-md-1'>
-                              <Typography>
+                              <div className='row-md-1'  style={{marginLeft:'1rem'}}>
+                              <Typography >
                               {s.courses[course_index].course_code}
                               </Typography>
                               </div>
@@ -306,7 +312,7 @@ const onRemove =(selectedList, removedItem) =>{
                               </Typography>
                               </div>
                               <div className='row'>
-                              <Typography>
+                              <Typography variant='h6' >
                                 year :{s.courses[course_index].year}
                               </Typography>
                               </div>
@@ -365,7 +371,7 @@ const onRemove =(selectedList, removedItem) =>{
           <Button variant="danger" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="success" onClick={postSpecialisation}>
+          <Button variant="primary" onClick={postSpecialisation}>
             Save Changes
           </Button>
         </Modal.Footer>
