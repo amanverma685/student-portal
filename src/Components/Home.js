@@ -1,6 +1,8 @@
 import  { useState,React,useEffect } from 'react';
 import Swal from 'sweetalert2';
+import List from '@mui/material/List';
 import { styled } from '@mui/material/styles';
+import Avatar from '@mui/material/Avatar';
 import axios from "axios";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Card from '@mui/material/Card';
@@ -16,19 +18,14 @@ import Collapse from '@mui/material/Collapse';
 import Button from 'react-bootstrap/Button';
 // import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
+import {MDBInput} from 'mdb-react-ui-kit';
+import Multiselect from 'multiselect-react-dropdown';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import ImageIcon from '@mui/icons-material/Image';
+import Divider from '@mui/material/Divider';
 
-
-
-import {
-  MDBContainer,
-  MDBCol,
-  MDBRow,
-  MDBBtn,
-  MDBIcon,
-  MDBInput,
-  MDBCheckbox
-}
-from 'mdb-react-ui-kit';
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
   return <IconButton {...other} />;
@@ -46,9 +43,14 @@ const delay = ms => new Promise(
 const HomeScreen = () => {
   
   const [show, setShow] = useState(false);
-
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+
+  // Add Specialisation Button Call
+  const handleShow = () => {
+    getCourses();
+    setSelectedCourses([]);
+    setShow(true);
+  }
 
   const [code, setCode] = useState('');
   const [credits_required, setCreditsRequired] = useState('');
@@ -56,6 +58,24 @@ const HomeScreen = () => {
   const [name, setName] = useState('');
   const [year, setYear] = useState(2022);
   
+ // Specialisation
+ const [spec, setSpec] = useState([]);
+
+ const [courses, setCourses] = useState([]);
+
+ const [selectdCourses , setSelectedCourses]= useState([]);
+
+ const [expandedArray, setExpanded] = useState([]);
+
+
+const onSelect =(selectedList, selectedItem) =>{
+setSelectedCourses( current => [...current, selectedItem]);
+}
+
+const onRemove =(selectedList, removedItem) =>{
+  setSelectedCourses((selectdCourses) =>
+  selectdCourses.filter((data) => data.course_id !== removedItem));
+}
 
   const handleChange_description = event => {
     setDescription(event.target.value);
@@ -73,20 +93,35 @@ const HomeScreen = () => {
     setCode(event.target.value);
 
   };
-
   const handleChange_credits_required = event => {
     setCreditsRequired(event.target.value);
   };
 
-  // Specialisation
-  const [spec, setSpec] = useState([]);
+ 
 
-  // For Expansion Panel
-  const [expanded, setExpanded] = useState(false);
+  const handleExpandClick = (d,index) => {
 
-  const handleExpandClick = () => {
-    setExpanded(!expanded);
+    setExpanded( data => {
+      return [...data.slice(0,index),
+      !(data[index]),...data.slice(index+1)
+      ]});
+      
   };
+
+  const getCourses = async() =>  {
+    const get_all_courses = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/course/get_all_courses";
+      await axios.get(get_all_courses)
+      .then((response) => {
+          setCourses(response.data);
+          console.log(courses);
+        })
+        .catch(function (error) {
+          console.log(error);
+          
+        })
+      
+    }
+
  const  deleteSpecialisation = async(e,specialisation_id)=> {
 
   const deleteURL = `http://localhost:9090/student_portal-1.0-SNAPSHOT/api/specialisation/${specialisation_id}`
@@ -107,39 +142,43 @@ const HomeScreen = () => {
         });
         await delay(1800);
         window.location.reload(true);
-
       }
-
   
-
   useEffect(() => {
     callApi();
+    getCourses();
   },[]);
 
   const callApi = async() =>  {
     const baseURL = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/specialisation/get";
       await axios.get(baseURL)
       .then((response) => {
-          // console.log(response.data);
-          setSpec(response.data);
           
+          setSpec(response.data);
 
+          for(var i =0;i<response.data.length;i++)
+          {
+            expandedArray[i]= false;
+          }
         })
         .catch(function (error) {
           console.log(error);
-          Swal("Error");
+          
         })
       
     }
 
     const postSpecialisation = async() =>  {
+      console.log(selectdCourses);
       const specialisationURL = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/specialisation/add";
-        await axios.post(specialisationURL,{
+        await axios.post(specialisationURL,
+          {
           "code":code,
           "name":name,
           "description":description,
           "year":year,
-          "credits_required":credits_required
+          "credits_required":credits_required,
+          "courses":selectdCourses
         })
         .then((response) => {
             // console.log(response.data);
@@ -167,7 +206,7 @@ const HomeScreen = () => {
       <>
         <div className='d-flex justify-content-between'>
           <div className=''>
-            <h2>Specialisations </h2>
+            <h2 style={{marginLeft:'2rem'}}>Specialisations </h2>
           </div>
           <div >
           <Button variant="info" onClick={handleShow} style={{margin:"1rem"}}>
@@ -181,66 +220,97 @@ const HomeScreen = () => {
             var text = `Credits required - ${s.credits_required}`;
             var code = `Course Code - ${s.code}`;
             var image_ = `./Assets/${s.code}.jpg`;
+            var image_ = 'https://anubhava.iiitb.ac.in/content/images/size/w1000/2021/04/iiitb_high_5.jpg';
+
             return(
-      <Card  style={{ width: "25rem", margin:"3rem" }}  key={index} sx={{ maxWidth: 400 }}>
-        
-        <CardHeader
-          title= {code}
-          subheader = {text}
-        />
-        <CardMedia
-          component="img"
-          height="250"
-          image={image_}
-          alt={s.code}
-        />
+              <><div className='col'>
+                <Card  style={{ width: "30rem", margin:"3.5rem" }}  key={index} sx={{ maxWidth: 600 }}>
 
-        <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {s.name}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {s.description}
-            </Typography>
-        </CardContent>
-        <CardActions>
-          <IconButton onClick={e=> deleteSpecialisation(e,s.specialisation_id)} aria-label="delete">
-           Delete <DeleteIcon />
-          </IconButton>
-          
-          <ExpandMore 
-            expand={expanded}
-            onClick={handleExpandClick}
-            aria-expanded={expanded}
-            aria-label="show more"> 
+                <CardHeader
+                  title= {code}
+                  subheader = {text}
+                />
 
-            <ExpandMoreIcon />
-             View Courses
-          </ExpandMore>
+                <CardMedia
+                  component="img"
+                  height="250"
+                  image={image_}
+                  alt={s.code}
+                />
+                <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {s.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {s.description}
+                    </Typography>
+                </CardContent>
 
-        </CardActions>
-        <div id={index}>
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <CardContent>
-              <Typography paragraph>Method:</Typography>
-              <Typography paragraph>
-                Heat 1/2 cup of the broth in a pot until simmering, add saffron and set
-                aside for 10 minutes.
-              </Typography>
-              <Typography paragraph>
-                stirring often until thickened and fragrant, about 10 minutes. Add
-                saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-              </Typography>
-              <Typography paragraph>
-                minutes more. (Discard any mussels that don&apos;t open.)
-              </Typography>
-              <Typography>
-                Set aside off of the heat to let rest for 10 minutes, and then serve.
-              </Typography>
-            </CardContent>
-          </Collapse>
-      </div>
-    </Card>
+                <CardActions>
+                  <IconButton onClick={e=> deleteSpecialisation(e,s.specialisation_id)} aria-label="delete">
+                  Delete <DeleteIcon />
+                  </IconButton>
+                  <ExpandMore 
+                    expand={expandedArray[index]} 
+                    onClick={ d => handleExpandClick(d,index)}
+                    aria-label="show more"
+                  > 
+                  <ExpandMoreIcon />
+                    View Courses
+                  </ExpandMore>
+
+                </CardActions>
+                
+                <div>
+                  <Collapse in={expandedArray[index]} timeout="auto" unmountOnExit>
+                    <div className='row'>
+                      {
+                        s.courses.map((c,course_index)=>{
+
+                return( 
+                    <CardContent >
+                      <List sx={{ width: '100%', maxWidth: '100%', bgcolor: 'background.paper' }}>
+                      <ListItem>
+                          <ListItemAvatar>
+                            <Avatar>
+                              <ImageIcon />
+                            </Avatar>
+                          </ListItemAvatar>
+                          <div className='row'>
+                            <div className='col'>
+                              <div className='row-md-2'>
+                                <Typography variant='h5'>{s.courses[course_index].name}</Typography>
+                              </div>
+                              <div className='row-md-1'>
+                              <Typography>
+                              {s.courses[course_index].course_code}
+                              </Typography>
+                              </div>
+                            </div>
+                            <div className='col'>
+                              <div className='row'>
+                              <Typography>
+                                capacity :{s.courses[course_index].capacity}
+                              </Typography>
+                              </div>
+                              <div className='row'>
+                              <Typography>
+                                capacity :{s.courses[course_index].capacity}
+                              </Typography>
+                              </div>
+                            </div>
+                          </div>
+                        </ListItem>
+                        <Divider variant="inset" component="li" />
+                        </List>
+                    </CardContent>
+                      )} )}
+                    </div>
+                  </Collapse>
+              </div>
+            </Card>
+          </div></>
+              
          );
       })
         }
@@ -260,10 +330,23 @@ const HomeScreen = () => {
         </div>
 
         </div>
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' id='formControlLg' type='text' size="lg"/>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' id='formControlLg' type='text' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' id='formControlLg' type='text' size="lg"/>
         <div className='col-md-4' style={{ marginRight :'2rem'}} >
         <MDBInput wrapperClass='mb-4' onChange={handleChange_year}  value={year} label='Year' id='formControlLg' type='number' size="lg"/>
+        </div>
+        <div className='row'>
+          <div>
+            <div className='row' style={{marginLeft:'.1rem'}}>Courses to offer under Specialisation</div>
+          <Multiselect
+            options={courses} // Options to display in the dropdown
+            selectedValues={[]} // Preselected value to persist in dropdown
+            onSelect={onSelect} // Function will trigger on select event
+            onRemove={onRemove} // Function will trigger on remove event
+            displayValue="name" // Property name to display in the dropdown options
+          />
+          </div>
+
         </div>
         </Modal.Body>
         <Modal.Footer>
