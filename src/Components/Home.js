@@ -224,7 +224,7 @@ const onRemove =(selectedList, removedItem) =>{
 
             return(
               <><div className='col'>
-                <Card  style={{ width: "30rem", margin:"3.5rem" }}  key={index} sx={{ maxWidth: 600 }}>
+                <Card  style={{ width: "35rem", margin:"3rem" }}  key={index} >
 
                 <CardHeader
                   title= {code}
@@ -295,7 +295,19 @@ const onRemove =(selectedList, removedItem) =>{
                               </div>
                               <div className='row'>
                               <Typography>
-                                capacity :{s.courses[course_index].capacity}
+                                faculty :{s.courses[course_index].faculty}
+                              </Typography>
+                              </div>
+                            </div>
+                            <div className='col'>
+                              <div className='row'>
+                              <Typography>
+                                credits :{s.courses[course_index].credits}
+                              </Typography>
+                              </div>
+                              <div className='row'>
+                              <Typography>
+                                year :{s.courses[course_index].year}
                               </Typography>
                               </div>
                             </div>
