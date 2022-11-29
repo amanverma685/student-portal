@@ -10,7 +10,6 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import CardHeader from '@mui/material/CardHeader';
-// import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -49,6 +48,11 @@ const HomeScreen = () => {
     setSelectedCourses([]);
     setShow(true);
   }
+  const images =[
+    'https://miro.medium.com/max/1400/1*myxaiKiFVxPgLghlnKSccg.jpeg',
+    'https://s3.amazonaws.com/utep-uploads/wp-content/uploads/unr/2020/07/27160408/unr-mscy-cybersecurity-careers-image.jpg',
+    'https://algorit.ma/wp-content/uploads/2017/10/spe2.png'
+]
 
   const [code, setCode] = useState('');
   const [credits_required, setCreditsRequired] = useState('');
@@ -62,6 +66,8 @@ const HomeScreen = () => {
  const [courses, setCourses] = useState([]);
 
  const [selectdCourses , setSelectedCourses]= useState([]);
+
+ const [image_url , set_image_url]= useState('https://anubhava.iiitb.ac.in/content/images/size/w1000/2021/04/iiitb_high_5.jpg');
 
  const [expandedArray, setExpanded] = useState([]);
 
@@ -95,6 +101,9 @@ const onRemove =(selectedList, removedItem) =>{
     setCreditsRequired(event.target.value);
   };
 
+  const handleChange_image_url_required = event => {
+    set_image_url(event.target.value);
+  };
  
 
   const handleExpandClick = (d,index) => {
@@ -176,7 +185,8 @@ const onRemove =(selectedList, removedItem) =>{
           "description":description,
           "year":year,
           "credits_required":credits_required,
-          "courses":selectdCourses
+          "courses":selectdCourses,
+          "image_url":image_url
         })
         .then((response) => {
             // console.log(response.data);
@@ -218,7 +228,7 @@ const onRemove =(selectedList, removedItem) =>{
             var text = `Credits required - ${s.credits_required}`;
             var code = `Course Code - ${s.code}`;
             // var image_ = `./Assets/${s.code}.jpg`;
-            var image_ = 'https://anubhava.iiitb.ac.in/content/images/size/w1000/2021/04/iiitb_high_5.jpg';
+            // var image_ = images[index];
 
             return(
               <><div className='col'>
@@ -232,14 +242,14 @@ const onRemove =(selectedList, removedItem) =>{
                 <CardMedia
                   component="img"
                   height="250"
-                  image={image_}
+                  image={s.image_url}
                   alt={s.code}
                 />
                 <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {s.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="h6" color="text.secondary">
                       {s.description}
                     </Typography>
                 </CardContent>
@@ -283,11 +293,11 @@ const onRemove =(selectedList, removedItem) =>{
                           <div className='row'>
                             <div className='col'>
                               <div className='row-md-2' style={{marginLeft:'1rem'}}>
-                                <Typography variant='h5'>{s.courses[course_index].name}</Typography>
+                                <Typography variant='h6'>{s.courses[course_index].name}</Typography>
                               </div>
-                              <div className='row-md-1'  style={{marginLeft:'1rem'}}>
+                              <div className='row'  style={{marginLeft:'1rem'}}>
                               <Typography >
-                              {s.courses[course_index].course_code}
+                              {s.courses[course_index].course_code}  ( credits :{s.courses[course_index].credits} )
                               </Typography>
                               </div>
                             </div>
@@ -302,19 +312,20 @@ const onRemove =(selectedList, removedItem) =>{
                                 faculty :{s.courses[course_index].faculty}
                               </Typography>
                               </div>
+                              
                             </div>
-                            <div className='col'>
+                            {/* <div className='col'>
                               <div className='row'>
                               <Typography>
-                                credits :{s.courses[course_index].credits}
+                                
                               </Typography>
                               </div>
                               <div className='row'>
-                              <Typography variant='h6' >
+                              <Typography >
                                 year :{s.courses[course_index].year}
                               </Typography>
                               </div>
-                            </div>
+                            </div> */}
                           </div>
                         </ListItem>
                         <Divider variant="inset" component="li" />
@@ -347,7 +358,10 @@ const onRemove =(selectedList, removedItem) =>{
 
         </div>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' id='formControlLg' type='text' size="lg"/>
+        
         <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' id='formControlLg' type='text' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' id='formControlLg' type='texxt' size="md"/>
+
         <div className='col-md-4' style={{ marginRight :'2rem'}} >
         <MDBInput wrapperClass='mb-4' onChange={handleChange_year}  value={year} label='Year' id='formControlLg' type='number' size="lg"/>
         </div>
