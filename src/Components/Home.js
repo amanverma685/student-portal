@@ -22,6 +22,7 @@ import Multiselect from 'multiselect-react-dropdown';
 import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Divider from '@mui/material/Divider';
+import { MDBTextArea } from 'mdb-react-ui-kit';
 
 const ExpandMore = styled((props) => {
   const { expand, ...other } = props;
@@ -71,6 +72,14 @@ const HomeScreen = () => {
 
   // Show model on button click
   const handleShow = () => {
+    setCode('');
+    // setSelectedCourses(s.selectdCourses);
+    setCreditsRequired(0);
+    setDescription('');
+    set_image_url('https://anubhava.iiitb.ac.in/content/images/size/w1000/2021/04/iiitb_high_5.jpg');
+    setName('');
+    setYear(2022);
+
     // Api call to get all courses
     getCourses();
     
@@ -263,7 +272,7 @@ const onRemove =(selectedList, removedItem) =>{
               Swal("Error");
             })
             await delay(1000);
-            // window.location.reload(true);
+            window.location.reload(true);
   
           
         }
@@ -430,7 +439,7 @@ const onRemove =(selectedList, removedItem) =>{
         </div>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' type='text' size="lg"/>
         
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' type='text' size="lg"/>
+        <MDBTextArea wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' type='text'  rows={3} size="lg"/>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' type='texxt' size="md"/>
 
         <div className='col-md-4' style={{ marginRight :'2rem'}} >
@@ -478,7 +487,7 @@ const onRemove =(selectedList, removedItem) =>{
         </div>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' type='text' size="lg"/>
         
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' type='text' size="lg"/>
+        <MDBTextArea wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' rows={3} type='text' size="lg"/>
         <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' type='texxt' size="md"/>
 
         <div className='col-md-4' style={{ marginRight :'2rem'}} >
