@@ -7,7 +7,7 @@ import LoginForm from './Components/Login';
 function App() {
 
   var status = window.sessionStorage.getItem('status');
-  console.log("app js",status);
+  // console.log("app js",status);
   
   return (
     <div>
@@ -27,3 +27,4 @@ function App() {
 }
 
 export default App;
+

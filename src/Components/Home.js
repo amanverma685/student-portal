@@ -15,7 +15,7 @@ import { IconButton } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Collapse from '@mui/material/Collapse';
 import Button from 'react-bootstrap/Button';
-// import Form from 'react-bootstrap/Form';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import Modal from 'react-bootstrap/Modal';
 import {MDBInput} from 'mdb-react-ui-kit';
 import Multiselect from 'multiselect-react-dropdown';
@@ -41,19 +41,6 @@ const HomeScreen = () => {
   
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
-
-  // Add Specialisation Button Call
-  const handleShow = () => {
-    getCourses();
-    setSelectedCourses([]);
-    setShow(true);
-  }
-  const images =[
-    'https://miro.medium.com/max/1400/1*myxaiKiFVxPgLghlnKSccg.jpeg',
-    'https://s3.amazonaws.com/utep-uploads/wp-content/uploads/unr/2020/07/27160408/unr-mscy-cybersecurity-careers-image.jpg',
-    'https://algorit.ma/wp-content/uploads/2017/10/spe2.png'
-]
-
   const [code, setCode] = useState('');
   const [credits_required, setCreditsRequired] = useState('');
   const [description, setDescription] = useState('');
@@ -71,16 +58,40 @@ const HomeScreen = () => {
 
  const [expandedArray, setExpanded] = useState([]);
 
+ const [specialisation_id, Setspecialisation_id]=useState([]);
 
+  const [update_model, setUpdateModel] = useState(false);
+
+  const handleUpdateClose = () => setUpdateModel(false);
+
+  useEffect(() => {
+    callApi();
+    getCourses();
+  },[]);
+
+  // Show model on button click
+  const handleShow = () => {
+    // Api call to get all courses
+    getCourses();
+    
+    //  Api call to initialise selected courses to []
+    setSelectedCourses([]);
+
+    // Enabling model to true
+    setShow(true);
+  }
+// 
 const onSelect =(selectedList, selectedItem) =>{
+  console.log(selectedItem)
 setSelectedCourses( current => [...current, selectedItem]);
 }
+
 
 const onRemove =(selectedList, removedItem) =>{
   setSelectedCourses((selectdCourses) =>
   selectdCourses.filter((data) => data.course_id !== removedItem));
 }
-
+// Changes in description
   const handleChange_description = event => {
     setDescription(event.target.value);
 
@@ -114,6 +125,22 @@ const onRemove =(selectedList, removedItem) =>{
       ]});
       
   };
+
+
+  const handleUpdate = (e,s) =>{
+    Setspecialisation_id(s.specialisation_id);
+    setCode(s.code);
+    // setSelectedCourses(s.selectdCourses);
+    setCreditsRequired(s.credits_required);
+    setDescription(s.description);
+    set_image_url(s.image_url);
+    setName(s.name);
+    setYear(s.year);
+    setUpdateModel(true);
+    
+    }
+
+
 
   const getCourses = async() =>  {
     const get_all_courses = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/course/get_all_courses";
@@ -151,10 +178,7 @@ const onRemove =(selectedList, removedItem) =>{
         window.location.reload(true);
       }
   
-  useEffect(() => {
-    callApi();
-    getCourses();
-  },[]);
+
 
   const callApi = async() =>  {
     const baseURL = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/specialisation/get";
@@ -209,12 +233,47 @@ const onRemove =(selectedList, removedItem) =>{
         
       }
   
+    const updateSpecialisation = async() =>  {
+        
+        
+        const specialisationURL = "http://localhost:9090/student_portal-1.0-SNAPSHOT/api/specialisation/update";
+          await axios.put(specialisationURL,
+            {
+            "specialisation_id":specialisation_id,
+            "code":code,
+            "name":name,
+            "description":description,
+            "year":year,
+            "credits_required":credits_required,
+            "courses":selectdCourses,
+            "image_url":image_url
+          })
+          .then((response) => {
+              // console.log(response.data);
+              setSpec(response.data);
+              Swal.fire(
+                'Added Successfully',
+                'The Specialisation Course has been Updated successfully',
+                'success'
+              );
+    
+            })
+            .catch(function (error) {
+              console.log(error);
+              Swal("Error");
+            })
+            await delay(1000);
+            // window.location.reload(true);
+  
+          
+        }
+    
 
     return (
       <>
         <div className='d-flex justify-content-between'>
-          <div className=''>
-            <h2 style={{marginLeft:'2rem'}}>Specialisations </h2>
+          <div>
+            <h1 style={{marginLeft:'2rem'}}> <span className="badge badge-primary">Specialisation</span></h1> 
           </div>
           <div >
           <Button variant="info"  onClick={handleShow} style={{margin:"1rem"}}>
@@ -231,12 +290,19 @@ const onRemove =(selectedList, removedItem) =>{
             // var image_ = images[index];
 
             return(
-              <><div className='col'>
+              <>
+              <div className='col'>
                 <Card  style={{ width: "30rem", margin:"3rem" }}  key={index} >
 
                 <CardHeader
                   title= {code}
                   subheader = {text}
+                  action={
+                    <Button onClick={e=> handleUpdate(e,s)} aria-label="edit">Update
+                      <MoreVertIcon />
+                    </Button>
+                  }
+                  
                 />
 
                 <CardMedia
@@ -255,17 +321,22 @@ const onRemove =(selectedList, removedItem) =>{
                 </CardContent>
 
                 <CardActions>
+                  <div className='row d-flex justify-content-between' >
+                  <div className='col-md-2'>
                   <IconButton onClick={e=> deleteSpecialisation(e,s.specialisation_id)} color='error' aria-label="delete">
                   Delete <DeleteIcon />
                   </IconButton>
-                  <ExpandMore 
+                  </div>
+                  <div className='col'>
+                  <ExpandMore  style={{marginLeft :'10rem'}}
                     expand={expandedArray[index]} 
                     onClick={ d => handleExpandClick(d,index)}
-                    aria-label="show more"
                   > 
                   <ExpandMoreIcon color='primary' />
                     View Courses
                   </ExpandMore>
+                  </div>
+                  </div>
 
                 </CardActions>
                 
@@ -353,17 +424,17 @@ const onRemove =(selectedList, removedItem) =>{
           <MDBInput wrapperClass='mb-3' onChange={handleChange_code} value={code} label='Specialisation Code' id='forControlLg' type='email' size="lg"/>
         </div>
         <div className='col-md-4'>
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_credits_required}  value={credits_required} label='Total Credits' id='formControlLg' type='number' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_credits_required}  value={credits_required} label='Total Credits' type='number' size="lg"/>
         </div>
 
         </div>
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' id='formControlLg' type='text' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' type='text' size="lg"/>
         
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' id='formControlLg' type='text' size="lg"/>
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' id='formControlLg' type='texxt' size="md"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' type='text' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' type='texxt' size="md"/>
 
         <div className='col-md-4' style={{ marginRight :'2rem'}} >
-        <MDBInput wrapperClass='mb-4' onChange={handleChange_year}  value={year} label='Year' id='formControlLg' type='number' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_year}  value={year} label='Year' type='number' size="lg"/>
         </div>
         <div className='row'>
           <div>
@@ -375,7 +446,7 @@ const onRemove =(selectedList, removedItem) =>{
             onRemove={onRemove} // Function will trigger on remove event
             displayValue="name" // Property name to display in the dropdown options
           />
-          </div>
+          </div>  
 
         </div>
         </Modal.Body>
@@ -384,6 +455,54 @@ const onRemove =(selectedList, removedItem) =>{
             Close
           </Button>
           <Button variant="primary" onClick={postSpecialisation}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+        </div>
+
+        <div className='Container'>
+        <Modal show={update_model} onHide={handleUpdateClose}>
+        <Modal.Header closeButton>
+          <Modal.Title style={{color:"black"}}>Update Specialisation</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{color:'black',width:'28rem'}}>
+        <div className='row'>
+        <div className='col-md-4' style={{ marginRight :'2rem'}}>
+          <MDBInput wrapperClass='mb-3' onChange={handleChange_code} value={code} label='Specialisation Code' id='forControlLg' type='email' size="lg"/>
+        </div>
+        <div className='col-md-4'>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_credits_required}  value={credits_required} label='Total Credits' type='number' size="lg"/>
+        </div>
+
+        </div>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_name}  value={name} label='Specialisation Name' type='text' size="lg"/>
+        
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_description}  value={description} label='Description' type='text' size="lg"/>
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_image_url_required}  value={image_url} label='Image URL' type='texxt' size="md"/>
+
+        <div className='col-md-4' style={{ marginRight :'2rem'}} >
+        <MDBInput wrapperClass='mb-4' onChange={handleChange_year}  value={year} label='Year' type='number' size="lg"/>
+        </div>
+        <div className='row'>
+          <div>
+            <div className='row' style={{marginLeft:'.1rem'}}>Courses to offer under Specialisation</div>
+          <Multiselect
+            options={courses} // Options to display in the dropdown
+            selectedValues={[]} // Preselected value to persist in dropdown
+            onSelect={onSelect} // Function will trigger on select event
+            onRemove={onRemove} // Function will trigger on remove event
+            displayValue="name" // Property name to display in the dropdown options
+          />
+          </div>  
+
+        </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleUpdateClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={updateSpecialisation}>
             Save Changes
           </Button>
         </Modal.Footer>

@@ -1,4 +1,3 @@
-
 import '../App.css';
 import { useState, React } from 'react';
 import axios from "axios";
@@ -26,7 +25,6 @@ function LoginForm() {
 
   const handleChange_email = event => {
     setEmail(event.target.value);
-
   };
 
   const handleChange_password = event => {
@@ -95,7 +93,6 @@ function LoginForm() {
             <MDBIcon fab icon="twitter" className="mx-2" />
             Continue with twitter
           </MDBBtn>
-
 
         </MDBCol>
 
